@@ -1,0 +1,5 @@
+dependencies:
+  lvgl/lvgl: 9.3.0
+  jbrilha/esp_lcd_ili9342:
+    version: 1.0.0
+    registry_url: https://components-staging.espressif.com
