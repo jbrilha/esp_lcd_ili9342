@@ -22,7 +22,7 @@ idf.py add-dependency "jbrilha/esp_lcd_ili9342^1.0.0"
 
    ```bash
    dependencies:
-     jbrilha/esp_lcd_ili9342: "1.0.0"
+     jbrilha/esp_lcd_ili9342: "^1.0.0"
    ```
 
    - As a direct repository
