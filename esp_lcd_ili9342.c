@@ -13,6 +13,16 @@
 
 #include "esp_lcd_ili9342.h"
 
+#define EXCT 0xC8
+#define PWR_CTL1 0xC0
+#define PWR_CTL2 0xC1
+#define VCOM_CTL1 0xC5
+#define RGB_IFACE 0xB0
+#define IFACE_CTL 0xF6
+#define PGAM_CTL 0xE0 // positive gamma control
+#define NGAM_CTL 0xE1 // negative gamma control
+#define DISP_CTL 0xB6
+
 static const char *TAG = "ili9342";
 
 static esp_err_t panel_ili9342_del(esp_lcd_panel_t *panel);
@@ -186,28 +196,22 @@ static esp_err_t panel_ili9342_reset(esp_lcd_panel_t *panel) {
 typedef struct {
     uint8_t cmd;
     uint8_t data[16];
-    uint8_t
-        data_bytes; // Length of data in above data array; 0xFF = end of cmds.
+    uint8_t data_bytes;
 } lcd_init_cmd_t;
 
 static const ili9342_lcd_init_cmd_t vendor_specific_init_default[] = {
     //  {cmd, { data }, data_size, delay_ms}
-    /* Power contorl B, power control = 0, DC_ENA = 1 */
-    {0xC8, (uint8_t[]){0xFF, 0x93, 0x42}, 3, 0}, // -
-    {0xC0, (uint8_t[]){0x12, 0x12}, 2, 0},       // -
-    {0xC1, (uint8_t[]){0x03}, 1, 0},             // -
-    {0xC5, (uint8_t[]){0xF2}, 1, 0},             // -
-    {0xB0, (uint8_t[]){0xE0}, 1, 0},             // -
-    {0xF6, (uint8_t[]){0x01, 0x00, 0x00}, 3, 0}, // -
-    {0xE0,
-     (uint8_t[]){0x00, 0x0C, 0x11, 0x04, 0x11, 0x08, 0x37, 0x89, 0x4C, 0x06,
-                 0x0C, 0x0A, 0x2E, 0x34, 0x0F},
-     15, 0}, // -
-    {0xE1,
-     (uint8_t[]){0x00, 0x0B, 0x11, 0x05, 0x13, 0x09, 0x33, 0x67, 0x48, 0x07,
-                 0x0E, 0x0B, 0x2E, 0x33, 0x0F},
-     15, 0},                                           // -
-    {0xB6, (uint8_t[]){0x08, 0x82, 0x1D, 0x04}, 4, 0}, // -
+    {EXCT, (uint8_t[]){0xFF, 0x93, 0x42}, 3, 0},
+    {PWR_CTL1, (uint8_t[]){0x12, 0x12}, 2, 0},
+    {PWR_CTL2, (uint8_t[]){0x03}, 1, 0},
+    {VCOM_CTL1, (uint8_t[]){0xF2}, 1, 0},
+    {RGB_IFACE, (uint8_t[]){0xE0}, 1, 0},
+    {IFACE_CTL, (uint8_t[]){0x01, 0x00, 0x00}, 3, 0},
+    {PGAM_CTL, (uint8_t[]){0x00, 0x0C, 0x11, 0x04, 0x11, 0x08, 0x37, 0x89, 0x4C,
+        0x06, 0x0C, 0x0A, 0x2E, 0x34, 0x0F}, 15, 0},
+    {NGAM_CTL, (uint8_t[]){0x00, 0x0B, 0x11, 0x05, 0x13, 0x09, 0x33, 0x67, 0x48,
+        0x07, 0x0E, 0x0B, 0x2E, 0x33, 0x0F}, 15, 0},
+    {DISP_CTL, (uint8_t[]){0x08, 0x82, 0x1D, 0x04}, 4, 0},
 };
 
 static esp_err_t panel_ili9342_init(esp_lcd_panel_t *panel) {

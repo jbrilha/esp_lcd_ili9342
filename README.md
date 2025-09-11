@@ -6,7 +6,7 @@ This component prvides an implementation of the ILI9342(C) LCD driver using the 
 
 | LCD controller | Communication interface | Component name  |                                    Link to datasheet                                    |
 | :------------: | :---------------------: | :-------------: | :-------------------------------------------------------------------------------------: |
-|    ILI9342     |    SPI (half-duplex)*   | esp_lcd_ili9342 | [Specification](https://www.displayfuture.com/Display/datasheet/controller/ILI9342.pdf) |
+|    ILI9342     |   SPI (half-duplex)\*   | esp_lcd_ili9342 | [Specification](https://www.displayfuture.com/Display/datasheet/controller/ILI9342.pdf) |
 
 ## Usage in a project
 
@@ -33,29 +33,27 @@ idf.py add-dependency "jbrilha/esp_lcd_ili9342^1.0.0"
        git: https://github.com/jbrilha/esp_lcd_ili9342.git
    ```
 
-## *Important note regarding SPI
+## \*Important note regarding SPI
 
 This display driver uses half-duplex communication, so instead of the usual MOSI/MISO separation, it uses a single SDA line.
 
-This means that SPI must be configured as such:
+This means that SPI does not require a MISO pin, like below:
 
 ```c
 void init_lcd_spi() {
-    spi_bus_config_t buscfg = {
+    spi_bus_config_t bus_cfg = {
         .sclk_io_num = LCD_CLK_PIN,
         .mosi_io_num = LCD_MOSI_PIN,
         .miso_io_num = -1, // set to -1
         .quadwp_io_num = -1,
         .quadhd_io_num = -1,
-        .max_transfer_sz = LCD_H_RES * 80 * sizeof(uint16_t),
-        .flags = SPICOMMON_BUSFLAG_SCLK |
-                 // SPICOMMON_BUSFLAG_MISO | // ommit this flag
-                 SPICOMMON_BUSFLAG_MOSI |
-                 SPICOMMON_BUSFLAG_MASTER,
-        .intr_flags = ESP_INTR_FLAG_LOWMED | ESP_INTR_FLAG_IRAM};
-    ESP_ERROR_CHECK(spi_bus_initialize(LCD_HOST, &buscfg, SPI_DMA_CH_AUTO));
+        .max_transfer_sz = 0;
+
+    ESP_ERROR_CHECK(spi_bus_initialize(LCD_HOST, &bus_cfg, SPI_DMA_CH_AUTO));
 }
 ```
+
+If you intend to use other devices that require MISO in the same SPI bus, the bus config should it include it normally.
 
 ## Supported devices
 

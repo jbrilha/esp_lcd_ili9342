@@ -167,17 +167,15 @@ static void lvgl_port_task(void *arg) {
 }
 
 void init_lcd_spi() {
-    spi_bus_config_t buscfg = {
+    spi_bus_config_t bus_cfg = {
         .sclk_io_num = LCD_CLK,
         .mosi_io_num = LCD_MOSI,
         .miso_io_num = -1,
         .quadwp_io_num = -1,
         .quadhd_io_num = -1,
-        .max_transfer_sz = LCD_H_RES * 80 * sizeof(uint16_t),
-        .flags = SPICOMMON_BUSFLAG_SCLK |
-                 SPICOMMON_BUSFLAG_MOSI | SPICOMMON_BUSFLAG_MASTER,
-        .intr_flags = ESP_INTR_FLAG_LOWMED | ESP_INTR_FLAG_IRAM};
-    ESP_ERROR_CHECK(spi_bus_initialize(LCD_HOST, &buscfg, SPI_DMA_CH_AUTO));
+        .max_transfer_sz = 0
+    };
+    ESP_ERROR_CHECK(spi_bus_initialize(LCD_HOST, &bus_cfg, SPI_DMA_CH_AUTO));
 }
 
 void init_display() {
