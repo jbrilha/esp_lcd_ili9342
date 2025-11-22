@@ -88,7 +88,7 @@ esp_lcd_new_panel_ili9342(const esp_lcd_panel_io_handle_t io,
                           "unsupported color space");
         break;
     }
-#else
+#elif ESP_IDF_VERSION < ESP_IDF_VERSION_VAL(6, 0, 0)
     switch (panel_dev_config->rgb_endian) {
     case LCD_RGB_ENDIAN_RGB:
         ili9342->madctl_val = 0;
@@ -99,6 +99,19 @@ esp_lcd_new_panel_ili9342(const esp_lcd_panel_io_handle_t io,
     default:
         ESP_GOTO_ON_FALSE(false, ESP_ERR_NOT_SUPPORTED, err, TAG,
                           "unsupported rgb endian");
+        break;
+    }
+#else
+    switch (panel_dev_config->rgb_ele_order) {
+    case LCD_RGB_ELEMENT_ORDER_RGB:
+        ili9342->madctl_val = 0;
+        break;
+    case LCD_RGB_ELEMENT_ORDER_BGR:
+        ili9342->madctl_val |= LCD_CMD_BGR_BIT;
+        break;
+    default:
+        ESP_GOTO_ON_FALSE(false, ESP_ERR_NOT_SUPPORTED, err, TAG,
+                          "unsupported rgb element order");
         break;
     }
 #endif
@@ -207,10 +220,14 @@ static const ili9342_lcd_init_cmd_t vendor_specific_init_default[] = {
     {VCOM_CTL1, (uint8_t[]){0xF2}, 1, 0},
     {RGB_IFACE, (uint8_t[]){0xE0}, 1, 0},
     {IFACE_CTL, (uint8_t[]){0x01, 0x00, 0x00}, 3, 0},
-    {PGAM_CTL, (uint8_t[]){0x00, 0x0C, 0x11, 0x04, 0x11, 0x08, 0x37, 0x89, 0x4C,
-        0x06, 0x0C, 0x0A, 0x2E, 0x34, 0x0F}, 15, 0},
-    {NGAM_CTL, (uint8_t[]){0x00, 0x0B, 0x11, 0x05, 0x13, 0x09, 0x33, 0x67, 0x48,
-        0x07, 0x0E, 0x0B, 0x2E, 0x33, 0x0F}, 15, 0},
+    {PGAM_CTL,
+     (uint8_t[]){0x00, 0x0C, 0x11, 0x04, 0x11, 0x08, 0x37, 0x89, 0x4C, 0x06,
+                 0x0C, 0x0A, 0x2E, 0x34, 0x0F},
+     15, 0},
+    {NGAM_CTL,
+     (uint8_t[]){0x00, 0x0B, 0x11, 0x05, 0x13, 0x09, 0x33, 0x67, 0x48, 0x07,
+                 0x0E, 0x0B, 0x2E, 0x33, 0x0F},
+     15, 0},
     {DISP_CTL, (uint8_t[]){0x08, 0x82, 0x1D, 0x04}, 4, 0},
 };
 
