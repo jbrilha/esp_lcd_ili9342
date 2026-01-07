@@ -12,6 +12,8 @@
 #include <sys/param.h>
 #include <unistd.h>
 
+#include "freertos/FreeRTOS.h"
+
 #include "lvgl.h"
 #include "lvgl_example.h"
 
