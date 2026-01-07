@@ -13,7 +13,7 @@ This component prvides an implementation of the ILI9342(C) LCD driver using the 
 1. As an ESP-IDF component, via `idf.py add-dependency`:
 
 ```bash
-idf.py add-dependency "jbrilha/esp_lcd_ili9342^1.0.0"
+idf.py add-dependency "jbrilha/esp_lcd_ili9342^1.1.1"
 ```
 
 2. Or including in it `idf_component.yml`
@@ -22,7 +22,7 @@ idf.py add-dependency "jbrilha/esp_lcd_ili9342^1.0.0"
 
    ```bash
    dependencies:
-     jbrilha/esp_lcd_ili9342: "^1.0.0"
+     jbrilha/esp_lcd_ili9342: "^1.1.1"
    ```
 
    - As a direct repository

@@ -1,5 +1,5 @@
 dependencies:
-  lvgl/lvgl: 9.3.0
+  lvgl/lvgl: 9.4.0
   esp_lcd_ili9342:
-    version: "^1.0.0"
+    version: "^1.1.1"
     override_path: "../../.."
